@@ -9,16 +9,16 @@ from google import genai
 
 load_dotenv()
 
-# First try environment variable
-API_KEY = os.getenv("GEMINI_API_KEY")
+try:
+    API_KEY = st.secrets["GEMINI_API_KEY"]
+except Exception as e:
+    st.error("GEMINI_API_KEY was not found in Streamlit Secrets.")
+    st.stop()
 
-# If not available, try Streamlit Cloud Secrets
-if not API_KEY:
-    try:
-        API_KEY = st.secrets["GEMINI_API_KEY"]
-    except Exception:
-        API_KEY = None
+client = genai.Client(api_key=API_KEY
 
+
+                      
     
 if not API_KEY:
     raise ValueError(
