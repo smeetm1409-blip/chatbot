@@ -1,25 +1,38 @@
-
 import os
+import streamlit as st
 from dotenv import load_dotenv
 from google import genai
 
 # =========================================================
-# Configuration
+# API KEY
 # =========================================================
 
 load_dotenv()
 
-# API_KEY = os.getenv("GEMINI_API_KEY")
+# First try environment variable
+API_KEY = os.getenv("GEMINI_API_KEY")
 
-# if not API_KEY:
-#     raise ValueError(
-#         "GEMINI_API_KEY is not set. "
-#         "Please create a .env file and add your Gemini API key."
-#     )
+# If not available, try Streamlit Cloud Secrets
+if not API_KEY:
+    try:
+        API_KEY = st.secrets["GEMINI_API_KEY"]
+    except Exception:
+        API_KEY = None
 
-client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+if not API_KEY:
+    raise ValueError(
+        "GEMINI_API_KEY is not configured. "
+        "Add it to Streamlit Cloud → Settings → Secrets."
+    )
 
-MODEL_NAME = "gemini-3.6-flash"
+
+# =========================================================
+# Gemini Configuration
+# =========================================================
+
+client = genai.Client(api_key=API_KEY)
+
+MODEL_NAME = "gemini-2.5-flash"
 
 
 # =========================================================
@@ -82,40 +95,36 @@ Your name is "Your IT Teacher".
 
 
 # =========================================================
-# In-Memory Conversation Storage
+# Conversation Memory
 # =========================================================
 
 conversation_history = []
 
 
 def clear_history():
-    """
-    Clear the entire conversation history.
-    """
+    """Clear the entire conversation history."""
     global conversation_history
     conversation_history = []
 
 
 def get_history():
-    """
-    Return the complete conversation history.
-
-    This is mainly used by the Streamlit frontend
-    to display the conversation.
-    """
+    """Return conversation history for the frontend."""
     return conversation_history
 
 
 # =========================================================
-# Gemini Response Function
+# Generate Response
 # =========================================================
 
 def get_response(user_message: str) -> str:
     """
-    Receive a user message, store it in memory,
-    send the latest 4 conversation exchanges to Gemini,
-    and return Gemini's response.
+    Send a user message to Gemini.
+
+    Only the latest 4 exchanges (8 messages) are sent
+    to Gemini as context.
     """
+
+    global conversation_history
 
     # -----------------------------------------------------
     # Validate input
@@ -127,7 +136,7 @@ def get_response(user_message: str) -> str:
     user_message = user_message.strip()
 
     # -----------------------------------------------------
-    # Store user's message
+    # Store user message
     # -----------------------------------------------------
 
     conversation_history.append({
@@ -136,35 +145,25 @@ def get_response(user_message: str) -> str:
     })
 
     # -----------------------------------------------------
-    # MEMORY
-    #
-    # One exchange consists of:
-    #
-    # User      = 1 message
-    # Assistant = 1 message
-    #
-    # Therefore:
-    #
-    # 4 exchanges = 8 messages
-    #
-    # We keep the entire conversation in memory,
-    # but only send the latest 8 messages to Gemini.
+    # Keep only latest 8 messages for Gemini
     # -----------------------------------------------------
 
     recent_history = conversation_history[-8:]
 
     # -----------------------------------------------------
-    # Convert our history into Gemini format
+    # Convert to Gemini format
     # -----------------------------------------------------
 
     contents = []
 
     for message in recent_history:
 
-        role = "user" if message["role"] == "user" else "model"
-
         contents.append({
-            "role": role,
+            "role": (
+                "user"
+                if message["role"] == "user"
+                else "model"
+            ),
             "parts": [
                 {
                     "text": message["content"]
@@ -190,7 +189,7 @@ def get_response(user_message: str) -> str:
         assistant_message = response.text
 
         # -------------------------------------------------
-        # Store Gemini's response
+        # Store assistant response
         # -------------------------------------------------
 
         conversation_history.append({
@@ -200,17 +199,13 @@ def get_response(user_message: str) -> str:
 
         return assistant_message
 
-    # -----------------------------------------------------
-    # Error handling
-    # -----------------------------------------------------
-
     except Exception as e:
 
-        # Remove the user message if Gemini failed.
+        # Remove user message if Gemini failed
         if conversation_history:
             conversation_history.pop()
 
         return (
-            "Sorry, I couldn't connect to Gemini.\n\n"
+            "Sorry, I couldn't generate a response.\n\n"
             f"Error: {str(e)}"
         )
