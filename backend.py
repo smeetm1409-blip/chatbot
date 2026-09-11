@@ -15,7 +15,7 @@ except Exception as e:
     st.error("GEMINI_API_KEY was not found in Streamlit Secrets.")
     st.stop()
 
-client = genai.Client(api_key=API_KEY
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 
                       
