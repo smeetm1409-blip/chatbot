@@ -17,7 +17,7 @@ if not API_KEY:
         "Please create a .env file and add your Gemini API key."
     )
 
-client = genai.Client(api_key=API_KEY)
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 MODEL_NAME = "gemini-3.6-flash"
 
