@@ -9,7 +9,7 @@ from google import genai
 
 load_dotenv()
 
-API_KEY = os.getenv("GEMINI_API_KEY")
+API_KEY = os.getenv("GEMINI_API_KEY","AQ.Ab8RN6KCTXE1mCUTXDseuHfFosQGdOXIFLf1C7_E6BqIpksuyg")
 
 if not API_KEY:
     raise ValueError(
