@@ -9,13 +9,13 @@ from google import genai
 
 load_dotenv()
 
-API_KEY = os.getenv("GEMINI_API_KEY")
+# API_KEY = os.getenv("GEMINI_API_KEY")
 
-if not API_KEY:
-    raise ValueError(
-        "GEMINI_API_KEY is not set. "
-        "Please create a .env file and add your Gemini API key."
-    )
+# if not API_KEY:
+#     raise ValueError(
+#         "GEMINI_API_KEY is not set. "
+#         "Please create a .env file and add your Gemini API key."
+#     )
 
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
