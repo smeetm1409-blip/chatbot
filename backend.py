@@ -10,9 +10,7 @@ from google import genai
 load_dotenv()
 
 try:
-    API_KEY = st.secrets["GEMINI_API_KEY"]
-    if  not API_KEY:
-        API_KEY="AQ.Ab8RN6KCTXE1mCUTXDseuHfFosQGdOXIFLf1C7_E6BqIpksuyg"
+    API_KEY = "AQ.Ab8RN6KCTXE1mCUTXDseuHfFosQGdOXIFLf1C7_E6BqIpksuyg"
 except Exception as e:
     st.error("GEMINI_API_KEY was not found in Streamlit Secrets.")
     st.stop()
