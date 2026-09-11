@@ -19,12 +19,15 @@ if not API_KEY:
     except Exception:
         API_KEY = None
 
+    
 if not API_KEY:
     raise ValueError(
-        "GEMINI_API_KEY is not configured. "
-        "Add it to Streamlit Cloud → Settings → Secrets."
+        "GEMINI_API_KEY is missing. "
+        "Please add GEMINI_API_KEY in "
+        "Streamlit Cloud → Manage app → Settings → Secrets."
     )
 
+    
 
 # =========================================================
 # Gemini Configuration
@@ -32,7 +35,7 @@ if not API_KEY:
 
 client = genai.Client(api_key=API_KEY)
 
-MODEL_NAME = "gemini-2.5-flash"
+MODEL_NAME = "gemini-3.6-flash"
 
 
 # =========================================================
