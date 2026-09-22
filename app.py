@@ -12,7 +12,7 @@ from backend import (
 # =========================================================
 
 st.set_page_config(
-    page_title="Infa AI",
+    page_title="Infa AI...",
     page_icon="💻",
     layout="centered"
 )
