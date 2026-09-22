@@ -81,7 +81,7 @@ st.markdown(
 # Header
 # =========================================================
 
-st.title("Your IT Teacher")
+st.title("Infa AI")
 
 st.write("Ask me anything about programming, IT, or computer science.")
 
